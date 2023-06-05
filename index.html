@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Personal experience</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <script
+      defer
+      src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"
+      integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-dark bg-dark">
+      <span class="navbar-brand mb-0 h1">Xpense Chart</span>
+      <span class="navbar-brand mb-0 h1" id="headingTotal"></span>
+    </nav>
+    <div class="container-fluid bg-light" style="min-height: 100vh">
+      <div class="container">
+        <div class="jumbotron mt-4">
+          <div class="input-group mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="inputAmount"
+              placeholder="Amount spent"
+              aria-label="Amount spent"
+              aria-describedby="spent in rupee"
+            />
+            <div class="input-group-append">
+              <span class="input-group-text" id="spent in rupee">₹</span>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="spent at">@</span>
+            </div>
+            <input
+              type="text"
+              class="form-control"
+              id="inputDesc"
+              placeholder="spent On"
+              aria-label="spent On"
+              aria-describedby="spent at"
+            />
+            <div class="input-group-append">
+              <button
+                class="btn btn-outline-primary"
+                type="button"
+                id="btnAddExpense"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <ul class="list-group" id="expenseTable"></ul>
+      </div>
+    </div>
+
+    <script>
+      // Logic layers
+
+      // init value of expense = 0
+      let totalExpense = 0;
+
+      // get the heading element
+      const headingEl = document.getElementById("headingTotal");
+
+      // get the reference to desc element
+      const inputDescEl = document.getElementById("inputDesc");
+
+      // reference to input element
+      const inputElement = document.getElementById("inputAmount");
+
+      // get ref to the table element
+      const expenseTableEl = document.getElementById("expenseTable");
+
+      // set the heading element to total expense
+      headingEl.textContent = `Total: ${totalExpense}`;
+
+      // all expenses at one place
+      const allExpenses = [];
+
+      function addExpenseToTotal() {
+        // create an expense object
+        const expenseItem = {};
+
+        // read the value from the input amount
+        const textAmount = inputElement.value;
+
+        // read the desc from inputdesc
+        const textDesc = inputDescEl.value;
+        console.log({ textDesc, textAmount });
+
+        // convert it to number
+        const expense = parseInt(textAmount, 10);
+
+        // put it in object
+        expenseItem.desc = textDesc;
+        expenseItem.amount = textAmount;
+        expenseItem.moment = new Date();
+
+        allExpenses.push(expenseItem);
+
+        // add that value to total expense
+        totalExpense += expense;
+
+        // set the heading element to total expense
+        const someText = `Total: ${totalExpense}`;
+        headingEl.textContent = someText;
+
+        const allExpenseHTML = allExpenses.map((expense) =>
+          createListItem(expense)
+        );
+
+        expenseTableEl.innerHTML = allExpenseHTML.join("");
+      }
+
+      const element = document.getElementById("btnAddExpense");
+      element.addEventListener("click", addExpenseToTotal);
+
+      //controller function
+
+      // get date string
+      function getDateString(momento) {
+        return momento.toLocaleString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+      }
+
+      //delete items
+      function deleteItem() {
+        console.log("delete item was called");
+      }
+
+      // view layers
+
+      function createListItem({ desc, amount, moment }) {
+        return `
+                <li class="list-group-item d-flex justify-content-between">
+                    <div class="d-flex flex-column">
+                        ${desc}
+                        <small class="text-muted">${getDateString(
+                          moment
+                        )}</small>
+                    </div>
+                    <div>
+                        <span class="px-5">${amount}</span>
+                        <button type="button" 
+                        class="btn btn-outline-danger btn-sm"  
+                        onClick="deleteItem()"
+                        >
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </li>
+                `;
+      }
+    </script>
+  </body>
+</html>
